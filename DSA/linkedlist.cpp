@@ -12,12 +12,12 @@ Node* head = nullptr;
 
 // Function to insert at the beginning
 void insertAtBeginning(int value) {
-    // Step 1: Create a new node
+    
     Node* newNode = new Node(); 
-    newNode->data = value;  // Assign value to the new node
-    newNode->next = head;   // Point new node's `next` to the current head
+    newNode->data = value;  
+    newNode->next = head;   
 
-    // Step 2: Update head to the new node
+    
     head = newNode;
     cout << "Inserted " << value << " at the beginning.\n";
 }
@@ -32,10 +32,10 @@ void insertAtEnd(int value) {
         head = newNode;
     } else {
         Node* temp = head;
-        while (temp->next != nullptr) {  // Traverse to the last node
+        while (temp->next != nullptr) {  
             temp = temp->next;
         }
-        temp->next = newNode;  // Attach new node at the end
+        temp->next = newNode;  
     }
     cout << "Inserted " << value << " at the end.\n";
 }
@@ -50,13 +50,13 @@ void insertAtPosition(int value, int position) {
     Node* newNode = new Node();
     newNode->data = value;
 
-    if (position == 1) {  // Insert at beginning
+    if (position == 1) {  
         newNode->next = head;
         head = newNode;
     } else {
         Node* temp = head;
         for (int i = 1; temp != nullptr && i < position - 1; i++) {
-            temp = temp->next;  // Move temp to (position - 1)
+            temp = temp->next; 
         }
 
         if (temp == nullptr) {
