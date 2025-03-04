@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile Page</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: white;
+        }
+        .profile-container {
+            display: flex;
+            align-items: center;
+
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .profile-picture {
+            width: 80px;
+            height: 80px;
+            /* border-radius: 50%; */
+            background-color: white;
+            object-fit: cover;
+        }
+        .profile-info {
+            flex: 1;
+            margin-left: 15px;
+            text-align: center;
+        }
+        .profile-info h2 {
+            margin: 5px 0;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .buttons button {
+            padding: 8px 16px;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .buttons button:hover {
+            background-color: lightblue;
+        }
+    </style>
+</head>
+<body>
+
+<div class="profile-container">
+
+    <img src="profile-pic.jpg" alt="profile picture not available" class="profile-picture" />
+
+
+    <div class="profile-info">
+        <h2>LigmaBalls</h2>
+        <p>i don't know what should i write in a bio, so i'm just writing something random!</p>
+    </div>
+
+    <div class="buttons">
+        <button>follow</button>
+        <button>message</button>
+        <button>more</button>
+    </div>
+</div>
+
+</body>
+</html>
