@@ -69,19 +69,29 @@ void deleteNode(int value) {
         return; // Node not found
     }
     
-    // Case 1: Node with one or no child
-    if (current->left == nullptr || current->right == nullptr) {
-        Node* temp = (current->left != nullptr) ? current->left : current->right;
+    // Case 1: 0 Child Case 
+    if ((current->left == nullptr) && (current->right == nullptr)) {
         if (parent == nullptr) {
-            root = temp; // If deleting root node
-        } else if (parent->left == current) {
+            root = nullptr; // If deleting root node
+        } 
+        else {
+            if(parent->left == current)
+                parent->left = nullptr;
+            else
+                parent->right = nullptr;
+        }
+        delete current;
+    } // Case 2: 1 Child Case 
+    else if (current->left == nullptr || current->right == nullptr) {
+        Node* temp = (current->left != nullptr) ? current->left : current->right;
+        if (parent->left == current) {
             parent->left = temp;
         } else {
             parent->right = temp;
         }
         delete current;
     } 
-    else { // Case 2: Node with two children
+    else { // Case 3: 2 children case
         Node* successor = findMin(current->right); // Find inorder successor
         int successorValue = successor->data;
         deleteNode(successorValue); // Delete the successor
@@ -90,18 +100,15 @@ void deleteNode(int value) {
 }
 
 // Function to perform inorder traversal
-void inorder(Node* node) {
-    if (node != nullptr) {
-        inorder(node->left);
-        cout << node->data << " ";
-        inorder(node->right);
+void Inorder(Node* root) {
+    Node* temp = root;
+    if (temp != nullptr) {
+        Inorder(temp->left);
+        cout << temp->data << " ";
+        Inorder(temp->right);
     }
 }
 
-void displayInorder() {
-    inorder(root);
-    cout << endl;
-}
 
 int main() {
     // Insert nodes
@@ -112,15 +119,16 @@ int main() {
     insert(40);
     insert(60);
     insert(80);
+    insert(90);
 
     cout << "Inorder traversal before deletion: ";
-    displayInorder();
+    Inorder(root);
 
     // Delete nodes
     deleteNode(50);
 
     cout << "Inorder traversal after deleting 50: ";
-    displayInorder();
+    Inorder(root);
 
     return 0;
 }
