@@ -14,12 +14,12 @@ RESET='\033[0m'
 
 # Move to the Learning Java directory
 echo -e "${BOLD}${CYAN}Venturing into the Java dojo... 🏯${RESET}"
-cd /home/reddy/codes/
+cd /home/surya/codes/
 
 # Confirm Git repository status
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    echo -e "${BOLD}${RED}Error: Not inside a valid Git repository! Retreat! 🚨${RESET}"
-    exit 1
+  echo -e "${BOLD}${RED}Error: Not inside a valid Git repository! Retreat! 🚨${RESET}"
+  exit 1
 fi
 
 # Show Git status before changes
@@ -27,13 +27,13 @@ echo -e "${BOLD}${YELLOW}Analyzing the previous commit battlefield... 🔍${RESE
 git status --short
 
 # Add untracked and tracked files
-echo -e "${BOLD}${GREEN}Gathering the Java scrolls... 📜${RESET}"
+echo -e "${BOLD}${GREEN}Gathering the Java scrolls... 📜${RESE/////T}"
 git add -A
 
 # Check for changes to be committed
 if git diff --cached --quiet; then
-    echo -e "${BOLD}${CYAN}No new wisdom to impart upon the GitHub archives. 🛌${RESET}"
-    exit 0
+  echo -e "${BOLD}${CYAN}No new wisdom to impart upon the GitHub archives. 🛌${RESET}"
+  exit 0
 fi
 
 # Commit the changes
@@ -46,4 +46,3 @@ echo -e "${BOLD}${GREEN}Unleashing your use less code to the world to laugh at �
 git push origin main
 
 echo -e "${BOLD}${YELLOW}Bravo! Your codes are now safely in the GitHub dojo 🏯✨${RESET}"
-
