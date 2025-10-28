@@ -1,0 +1,5 @@
+item = input("Enter item name: ")
+quantity = input("Enter quantity: ")
+price_per_item = input("Enter price per item: ")
+total_price = float(quantity) * float(price_per_item)
+print("Total price for " + quantity + " " + item + " is $" + str(total_price))
