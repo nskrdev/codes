@@ -14,7 +14,7 @@ RESET='\033[0m'
 
 # Move to the Learning Java directory
 echo -e "${BOLD}${CYAN}Venturing into the Java dojo... 🏯${RESET}"
-cd /home/surya/codes/
+cd /home/red/codes/
 
 # Confirm Git repository status
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
