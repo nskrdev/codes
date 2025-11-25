@@ -27,7 +27,7 @@ void search(string text, string pattern) {
         while (j >= 0 && pattern[j] == text[shift + j])
             j--;
         
-        if (j < 0) {
+        if (j < 0) {2
             cout << "Pattern found at index " << shift << endl;
             shift += (shift + m < n) ? m - badchar[text[shift + m]] : 1;
         } else {

@@ -1,0 +1,1226 @@
+{
+  "name": "Linkedin Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "keywords",
+              "value": "={{ $json['Job title'] }}"
+            },
+            {
+              "name": "location",
+              "value": "={{ $json.location }}"
+            },
+            {
+              "name": "distance",
+              "value": "={{ $json.distance }}"
+            },
+            {
+              "name": "f_WT",
+              "value": "={{ $json.is_remote }}"
+            },
+            {
+              "name": "pageNum",
+              "value": "0"
+            },
+            {
+              "name": "start",
+              "value": "={{ $json.iterations * 10 }}"
+            },
+            {
+              "name": "f_TPR",
+              "value": "=r{{ $json[\"Hours Old\"] *3600}}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n    \"authority\": \"www.linkedin.com\",\n    \"accept\": \"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7\",\n    \"accept-language\": \"en-US,en;q=0.9\",\n    \"cache-control\": \"max-age=0\",\n    \"upgrade-insecure-requests\": \"1\",\n    \"user-agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\"\n}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        -320
+      ],
+      "id": "693f12bb-7978-4280-b654-1c63f66a553f",
+      "name": "Get LinkedIn Jobs"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "titles",
+              "cssSelector": "span.sr-only",
+              "returnArray": true
+            },
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1072,
+        48
+      ],
+      "id": "aa7c88a2-21c5-4bd5-ab7a-22d52016843c",
+      "name": "extract titles"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "titles",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        48
+      ],
+      "id": "d0e7df3e-b72b-4b57-bf9c-366f13ffa6e9",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "url",
+              "cssSelector": "a.base-card__full-link",
+              "returnValue": "attribute",
+              "attribute": "href",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1072,
+        224
+      ],
+      "id": "5c704e65-ee62-497d-b947-e76edac8e717",
+      "name": "Extract links"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "url",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        224
+      ],
+      "id": "02b87c5b-4b6b-45fc-ad83-4e22e4119c21",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 6,
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2624,
+        64
+      ],
+      "id": "60e441c4-1d2a-4f85-8100-05dc14d188a7",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "location",
+              "cssSelector": "span.job-search-card__location",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1072,
+        384
+      ],
+      "id": "594bb28f-aae8-4ba7-8fdb-efcd5e0851dc",
+      "name": "Extract location"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "location",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        384
+      ],
+      "id": "d741bdc1-cc08-4eb7-8fc4-117342060816",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "time",
+              "cssSelector": "time",
+              "returnValue": "attribute",
+              "attribute": "datetime",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1072,
+        560
+      ],
+      "id": "a88a0869-4709-4af8-95bf-95f8335f4fdc",
+      "name": "Extract post time"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "time",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        560
+      ],
+      "id": "09030866-221e-4f4f-ac8d-bad0e62cd8f7",
+      "name": "Split Out3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fillers = Array.from({ length: Math.floor($input.first().json.amount/10) }, (_, index) => index);\n\n$input.first().json.iterations = fillers;\n\nreturn $input.first();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        -400
+      ],
+      "id": "ece83e1d-d5ae-4a85-8af7-098b466eced2",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "iterations",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        96,
+        -400
+      ],
+      "id": "d4b03959-9fdf-4d75-9c58-083423377958",
+      "name": "Chunks"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        272,
+        -400
+      ],
+      "id": "f6f023d7-5435-4250-b959-4956680b2bf0",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2992,
+        624
+      ],
+      "id": "112d0523-0009-48c6-86a1-b4d60a2395d6",
+      "name": "Wait to not proc rate limit",
+      "webhookId": "602a262f-b89d-4fb3-b923-abec4f1ee860"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a2ab5b4e-7d06-43be-b0aa-94ee145f0f88",
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": 10,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2992,
+        128
+      ],
+      "id": "d3970308-e91c-4311-97da-9a4a61bd3da5",
+      "name": "Are we done early?"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "description",
+              "cssSelector": ".show-more-less-html__markup"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        2304,
+        -192
+      ],
+      "id": "2d683dde-3428-429b-9009-ee6a3e853db0",
+      "name": "Extract job description"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "direct_url",
+              "cssSelector": "code#applyUrl",
+              "returnValue": "html"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        2112,
+        -48
+      ],
+      "id": "98dac270-2497-4863-924c-1444d73140e6",
+      "name": "Extract external URL"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7292a0d8-1bb3-4bc3-8dbb-ce7662d97a11",
+              "name": "direct_url",
+              "value": "={{ $json.direct_url ? decodeURIComponent($json.direct_url.replace('<!--', '').replace('-->', '').replaceAll('\"', '').split('url=')[1]) : ''  }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2304,
+        -48
+      ],
+      "id": "c406c68a-69a4-40b2-8f97-f9cc9915c2e0",
+      "name": "Parse external URL"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bdebc36c-c2c9-4fbe-ba49-5fbd92c9755c",
+              "leftValue": "={{ $('Loop Over Items').item.json['Get advanced data'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1696,
+        -64
+      ],
+      "id": "15f3f721-5d54-45fd-8ae5-bf40bbaae944",
+      "name": "User wants advanced report"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e1a31380-f68f-4363-9e9e-6526f2abb6e2",
+              "name": "Job title",
+              "value": "PHD Developer",
+              "type": "string"
+            },
+            {
+              "id": "4e35fc29-71ce-4bbe-84be-20f3844dc232",
+              "name": "location",
+              "value": "Germany",
+              "type": "string"
+            },
+            {
+              "id": "93fba91f-cef1-49b5-9434-06f9c515c000",
+              "name": "distance",
+              "value": "1000",
+              "type": "string"
+            },
+            {
+              "id": "4bc0fed3-76d3-431d-8b2f-c039d45f6763",
+              "name": "is_remote",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "d5c6d58f-cad8-4890-81b1-9cdf7da39f7f",
+              "name": "Hours Old",
+              "value": "96",
+              "type": "string"
+            },
+            {
+              "id": "41e71a18-da71-4828-b501-92a85b360b8d",
+              "name": "amount",
+              "value": "20",
+              "type": "string"
+            },
+            {
+              "id": "7e5e7cca-601f-459a-bd1a-0b9e85a573c2",
+              "name": "Get advanced data",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {
+          "dotNotation": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -688,
+        -400
+      ],
+      "id": "2bd96506-702c-4e47-9bf4-cab5cee1e3db",
+      "name": "Set Job Search Parameters"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8,
+              "triggerAtMinute": 17
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1200,
+        -400
+      ],
+      "id": "d696c98e-cee8-4c93-b6eb-6be85d297518",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "content": "# Fetch the newest linked in jobs and post them to the google sheet",
+        "height": 1596,
+        "width": 3576,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        -736
+      ],
+      "typeVersion": 1,
+      "id": "9bf45b28-abe4-4fc6-a705-4bcc14fb9692",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "06611fd5-91d1-426e-9dbc-9688e2757f71",
+              "name": "cleaned_url",
+              "value": "={{ $json.url.split('?')[0] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1696,
+        256
+      ],
+      "id": "11e57356-0810-451b-9e7f-a0c4deecb0b2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1200,
+        -224
+      ],
+      "id": "40a357c2-d0d2-471f-9994-2db0e4307b3c",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "content": "# Split into chunks\n\nWe need to split our request into multiple queries so that we can satisfy our scraping. We go for a chunk size of 10 as this is what LinkedIn provides. We then iterate through the results.\n",
+        "height": 400,
+        "width": 592
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -112,
+        -624
+      ],
+      "typeVersion": 1,
+      "id": "afe0d681-2dc9-4066-a10a-aa03b47ad03e",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# The actual call to the LinkedIn API\n\nWe grab our results.",
+        "height": 528,
+        "width": 352
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        592,
+        -640
+      ],
+      "typeVersion": 1,
+      "id": "1471c270-f41f-492c-9270-fa777ae99db2",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# Extracting Meta Information\n\nFrom each job we need to extract meta information.\n\nWe join it back later.\n\nThis way we have a nice Key/Value per information.",
+        "height": 1120,
+        "width": 528
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1008,
+        -352
+      ],
+      "typeVersion": 1,
+      "id": "ac8c5d4f-21fa-426f-bb81-1e6f0c714586",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "# Advanced Data Magic\n\nIf we set Get advanced data to true we go for another round of scraping and visit the detail page of each job application to get further information",
+        "height": 448,
+        "width": 848,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1648,
+        -320
+      ],
+      "typeVersion": 1,
+      "id": "63582c78-dba5-4abe-b987-e8071c69994b",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "### Tidy up the job link from linkedIn Tracking ...",
+        "height": 272,
+        "width": 208
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1648,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "6bc170be-5a17-41ff-903b-e41048a275c9",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n    \"authority\": \"www.linkedin.com\",\n    \"accept\": \"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7\",\n    \"accept-language\": \"en-US,en;q=0.9\",\n    \"cache-control\": \"max-age=0\",\n    \"upgrade-insecure-requests\": \"1\",\n    \"user-agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\"\n}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 2000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1904,
+        -80
+      ],
+      "id": "7b3dc401-99af-4258-a74e-7c6b35f68809",
+      "name": "Srape Job Details"
+    },
+    {
+      "parameters": {
+        "content": "# Merge Job Information into into one list",
+        "height": 512,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2560,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "fe06a01c-302f-4b8e-af6e-0674822ac1b0",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "# Are we done early?\n\nWe add an early exit condition in case we did not find enough jobs. \n",
+        "height": 432
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2928,
+        -128
+      ],
+      "typeVersion": 1,
+      "id": "af2ec9b0-a1a1-40c1-b8ad-bf564d0c4568",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "# Wait a bit before we start our next round\n\nWe don't want LinkedIn to block us, so we will wait a bit so we do not get rate limited.",
+        "height": 368,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2960,
+        400
+      ],
+      "typeVersion": 1,
+      "id": "031eed8e-5e52-456a-81a3-d8a9d01dc094",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "# Persist our results\n\nWe now persist the aggregated jobs somewhere. I decided to go for Google Sheets.\n\n## Create a Google Sheet with these Columns:\n**Job title\nLocation\nlinkedin url\nposted at\ndescription\njob url\norigin_url**",
+        "height": 592,
+        "width": 592
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3392,
+        -976
+      ],
+      "typeVersion": 1,
+      "id": "1a734aca-a802-4a94-a372-d5365cc0fb19",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1WktKAPDKCOjGr22Hq45tKEgrngi7CHVNmxTP--nCias",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Job posts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WktKAPDKCOjGr22Hq45tKEgrngi7CHVNmxTP--nCias/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Job posts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WktKAPDKCOjGr22Hq45tKEgrngi7CHVNmxTP--nCias/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Job title": "={{ $json.titles }}",
+            "description": "={{ $json.description }}",
+            "job url": "={{ $json.direct_url }}",
+            "linkedin url": "={{ $json.cleaned_url }}",
+            "Location": "={{ $json.location }}",
+            "posted at": "={{ $json.time }}",
+            "origin_url": "={{ $json.url }}"
+          },
+          "matchingColumns": [
+            "linkedin url"
+          ],
+          "schema": [
+            {
+              "id": "Job title",
+              "displayName": "Job title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "linkedin url",
+              "displayName": "linkedin url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "posted at",
+              "displayName": "posted at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "job url",
+              "displayName": "job url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "origin_url",
+              "displayName": "origin_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED",
+          "useAppend": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3504,
+        -560
+      ],
+      "id": "d2a98f24-64f4-46d7-bdf4-3ce49c99db03",
+      "name": "Update our Job List to google sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mtTgIFhsh6Vx4aR7",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# 🔍 Parameter Guide\n\n\nEach field in this node lets you filter results based on different criteria.\n\n\n\n## Field Explanations & Valid Options\n\n### Job title\nJob title or search keywords.\nUse terms like role names or skills.\nExample: \"Data Scientist\", \"Growth Marketing\"\n\n\n### location\nCity or region where the job is located.\nUse a city or region name.\nRegions must adhere to\n[Linkedin Locations](https://www.linkedin.com/help/recruiter/answer/a524054?lang=en-US)\nExample: \"Berlin\", \"New York\", \"Germany\", ...\n\n\n### Hours Old\nPosting date filter.\nLimits results based on how recently jobs were posted.\nTypically something recent that should match how often you want the scraper to run\nExample: 96, 24, ...\n\n\n### amount\nA maximum of jobs found for your keyword. It may always be less.\nI recommend not to go above 100.\nExample: 20\n\n\n### is_remote\nWhether you are looking for remote jobs only\n- (leave blank for no preference or set to true, in case you only want remote jobs to show up)\nExample: true\n\n\n### Get advanced data\nSetting this will scrape more detailed information, such as the origin url to apply for and a full job description\nTurning this on will make your scraping process take significantly longer.\nExample: true | false\n\n\n\n\n",
+        "height": 1292,
+        "width": 492
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -848,
+        -1472
+      ],
+      "typeVersion": 1,
+      "id": "87285b9a-6361-45b9-aba8-694e0dc5d736",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Workflow Assistance\n\nFor any questions, write me on discord: twiyu.\n\n\n",
+        "height": 320,
+        "width": 340,
+        "color": 4
+      },
+      "id": "6e85a4cb-cc59-4a77-b04e-cbbe8e7fd530",
+      "name": "Sticky Note11",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1440,
+        -800
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# LinkedIn Job Data Scraper to Google Sheets",
+        "height": 96,
+        "width": 848,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        -880
+      ],
+      "typeVersion": 1,
+      "id": "1a17f12f-6746-43fb-84c5-db99af19ae7b",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "content": "\n![Source example](https://i.ibb.co/GvZ0277v/image.png)",
+        "height": 304,
+        "width": 656
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        -1264
+      ],
+      "typeVersion": 1,
+      "id": "f3adf0b7-8695-4644-8cd6-60ddd710a92a",
+      "name": "Sticky Note13"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get LinkedIn Jobs": {
+      "main": [
+        [
+          {
+            "node": "Extract links",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "extract titles",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract location",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract post time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extract titles": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract links": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "User wants advanced report",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract location": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Extract post time": {
+      "main": [
+        [
+          {
+            "node": "Split Out3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out3": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Are we done early?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Chunks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chunks": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Update our Job List to google sheets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get LinkedIn Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait to not proc rate limit": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Are we done early?": {
+      "main": [
+        [
+          {
+            "node": "Update our Job List to google sheets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait to not proc rate limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract job description": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Extract external URL": {
+      "main": [
+        [
+          {
+            "node": "Parse external URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse external URL": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "User wants advanced report": {
+      "main": [
+        [
+          {
+            "node": "Srape Job Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Job Search Parameters": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Job Search Parameters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Set Job Search Parameters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Srape Job Details": {
+      "main": [
+        [
+          {
+            "node": "Extract job description",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract external URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "26c193fa-21a7-45ad-bf63-00aa847d58ad",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1df0389966343a9cfd5949aa7eefec9e998db9d15ee5fe43ec3ba61a7bc77ba7"
+  },
+  "id": "bDAA61QWYy8qFD7b",
+  "tags": [
+    {
+      "createdAt": "2025-01-19T21:24:36.143Z",
+      "updatedAt": "2025-01-19T21:24:36.143Z",
+      "id": "kgSo4ur74vuSoCdu",
+      "name": "gitlab_backup_enabled"
+    }
+  ]
+}
